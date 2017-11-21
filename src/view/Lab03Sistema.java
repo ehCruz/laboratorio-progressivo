@@ -2,11 +2,10 @@ package view;
 
 import java.util.Scanner;
 
-import model.Lab02ContaCorrente;
+import model.Lab03ContaCorrente;
 
-public class Lab02Sistema {
+public class Lab03Sistema {
 	static Scanner sc = new Scanner(System.in);
-	static Lab02ContaCorrente cc = new Lab02ContaCorrente();
 
 	/*
 	 * Método que realiza o cadastro de novos clientes
@@ -19,7 +18,9 @@ public class Lab02Sistema {
 		int agenciaChecked = 0;
 		int contaChecked = 0;
 		String nomeCliente = "";
+		double valorDeposito = 0;
 		boolean checkData = true;
+
 		/*
 		 * Dentro de um loop, é solicitado ao usuário o número da agência, verifica se o
 		 * que foi digitado possui o número de caracteres necessário, se sim, tenta
@@ -45,7 +46,6 @@ public class Lab02Sistema {
 				System.out.println("Erro: Número de agência " + e.getMessage() + " é inválido!");
 			}
 			if (agenciaChecked != 0) {
-				cc.numAgen = agenciaChecked;
 				checkData = false;
 			}
 		}
@@ -76,7 +76,6 @@ public class Lab02Sistema {
 				System.out.println("Erro: Número de agência " + e.getMessage() + " é inválido!");
 			}
 			if (contaChecked != 0) {
-				cc.numConta = contaChecked;
 				checkData = false;
 			}
 		}
@@ -92,7 +91,6 @@ public class Lab02Sistema {
 				System.out.println("Nome do clite deve conter mais que 4 caracteres.");
 			}
 		} while (nomeCliente.length() < 4);
-		cc.nome = nomeCliente;
 
 		/*
 		 * Da a opção ao usuário se deseja realizar um depósito, valida a entrada. Caso
@@ -104,9 +102,22 @@ public class Lab02Sistema {
 			confirma = sc.nextLine();
 		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
 		if (confirma.equalsIgnoreCase("s")) {
-			execDeposito();
+			do {
+				System.out.println("Informe o valor a ser depositado:");
+				valorDeposito = sc.nextDouble();
+			} while (valorDeposito <= 0);
+			do {
+				System.out.println("Confirmar depósito <S/n>  :");
+				confirma = sc.next().concat(sc.nextLine());
+			} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
+			if (confirma.equalsIgnoreCase("s")) {
+				System.out.println("Depósito realizado.");
+			} else {
+				System.out.println("Depósito cancelado.");
+			}
 		}
-		cc.imprimir();
+		Lab03ContaCorrente cc = new Lab03ContaCorrente(agenciaChecked, contaChecked, nomeCliente, valorDeposito);
+		cc.gravar();
 	}
 
 	/*
@@ -118,26 +129,14 @@ public class Lab02Sistema {
 		double valorSaque;
 		String confirma;
 		int validaSaque;
-		boolean loopSaque = true;
-		/*
-		 * Modificar depois para validar a entrada *somente números*
-		 */
-		while (loopSaque) {
-			System.out.println("Informe o número da agência:");
-			agencia = sc.nextInt();
-			if (agencia != cc.numAgen) {
-				System.out.println("Número agência inválido.");
-			} else {
-				System.out.println("Informe o número da conta:");
-				conta = sc.nextInt();
-				if (conta != cc.numConta) {
-					System.out.println("Número conta inválido.");
-				} else {
-					loopSaque = false;
-				}
-			}
-		}
-		if (cc.saldo > 0) {
+
+		System.out.println("Informe o número da agência:");
+		agencia = sc.nextInt();
+		System.out.println("Informe o número da conta:");
+		conta = sc.nextInt();
+		Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+
+		if (cc.getSaldo() > 0) {
 			do {
 				System.out.println("Informe o valor para saque:");
 				valorSaque = sc.nextDouble();
@@ -150,6 +149,7 @@ public class Lab02Sistema {
 				validaSaque = cc.saque(valorSaque);
 				if (validaSaque == 1) {
 					System.out.println("Saque realizado.");
+					cc.gravar();
 				} else {
 					System.out.println("Saldo Insuficiente.");
 				}
@@ -169,25 +169,13 @@ public class Lab02Sistema {
 		int conta;
 		double valorDeposito;
 		String confirma;
-		boolean loopDeposito = true;
-		/*
-		 * Modificar depois para validar a entrada *somente números*
-		 */
-		while (loopDeposito) {
-			System.out.println("Informe o número da agência:");
-			agencia = sc.nextInt();
-			if (agencia != cc.numAgen) {
-				System.out.println("Número agência inválido.");
-			} else {
-				System.out.println("Informe o número da conta:");
-				conta = sc.nextInt();
-				if (conta != cc.numConta) {
-					System.out.println("Número conta inválido.");
-				} else {
-					loopDeposito = false;
-				}
-			}
-		}
+
+		System.out.println("Informe o número da agência:");
+		agencia = sc.nextInt();
+		System.out.println("Informe o número da conta:");
+		conta = sc.nextInt();
+		Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+
 		do {
 			System.out.println("Informe o valor a ser depositado:");
 			valorDeposito = sc.nextDouble();
@@ -198,14 +186,33 @@ public class Lab02Sistema {
 		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
 		if (confirma.equalsIgnoreCase("s")) {
 			cc.deposito(valorDeposito);
+			cc.gravar();
 			System.out.println("Depósito realizado.");
 		} else {
 			System.out.println("Depósito cancelado.");
 		}
 	}
 
-	public static void execImprimir() {
-		cc.imprimir();
+	public static void execConsulta() {
+		int agencia;
+		int conta;
+		String confirma;
+		
+		System.out.println("Informe o número da agência:");
+		agencia = sc.nextInt();
+		System.out.println("Informe o número da conta:");
+		conta = sc.nextInt();
+		
+		do {
+			System.out.println("Confirmar consulta <S/n>  :");
+			confirma = sc.next().concat(sc.nextLine());
+		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
+		if (confirma.equalsIgnoreCase("s")) {
+			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+			cc.imprimir();
+		} else {
+			System.out.println("Consulta cancelada.");
+		}
 	}
 
 	public static void main(String[] args) {
@@ -214,7 +221,7 @@ public class Lab02Sistema {
 		boolean loopMenu = true;
 		while (loopMenu) {
 			System.out.println(
-					"1 - Cadastramento\n" + "2 - Saque\n" + "3 - Deposito\n" + "4 - Exibir dados\n" + "9 - Fim");
+					"1 - Cadastramento\n" + "2 - Saque\n" + "3 - Deposito\n" + "4 - Consulta\n" + "9 - Fim");
 			opMenu = sc.nextInt();
 			switch (opMenu) {
 			case 1:
@@ -231,7 +238,7 @@ public class Lab02Sistema {
 				break;
 			case 4:
 				// imprimir
-				execImprimir();
+				execConsulta();
 				break;
 			case 9:
 				// Fim
@@ -242,4 +249,5 @@ public class Lab02Sistema {
 			}
 		}
 	}
+
 }
