@@ -5,12 +5,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Lab03ContaCorrente {
 	private int numAgen;
 	private int numConta;
 	private String nome;
 	private double saldo;
+
+	NumberFormat nf;
 
 	public Lab03ContaCorrente() {
 	};
@@ -42,11 +47,13 @@ public class Lab03ContaCorrente {
 	}
 
 	public void imprimir() {
+		nf = DecimalFormat.getCurrencyInstance(new Locale("pt", "BR"));
+		nf.setMaximumFractionDigits(2);
 		System.out.println();
 		System.out.println(new StringBuilder().append("Agência		: ").append(getNumAgen()).toString());
 		System.out.println(new StringBuilder().append("Conta		: ").append(getNumConta()).toString());
 		System.out.println(new StringBuilder().append("Nome cliente	: ").append(getNome()).toString());
-		System.out.println(new StringBuilder().append("Saldo		: R$ ").append(getSaldo()).toString());
+		System.out.println(new StringBuilder().append("Saldo		: ").append(nf.format(getSaldo())).toString());
 		System.out.println();
 	}
 
