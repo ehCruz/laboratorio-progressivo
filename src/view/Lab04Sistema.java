@@ -3,8 +3,9 @@ package view;
 import java.util.Scanner;
 
 import model.Lab03ContaCorrente;
+import model.Lab04Historico;
 
-public class Lab03Sistema {
+public class Lab04Sistema {
 	static Scanner sc = new Scanner(System.in);
 
 	/*
@@ -134,30 +135,28 @@ public class Lab03Sistema {
 		agencia = sc.nextInt();
 		System.out.println("Informe o número da conta:");
 		conta = sc.nextInt();
-		Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
 
-		if (cc.getSaldo() > 0) {
-			do {
-				System.out.println("Informe o valor para saque:");
-				valorSaque = sc.nextDouble();
-			} while (valorSaque <= 0);
-			do {
-				System.out.println("Confirmar saque <S/n>  :");
-				confirma = sc.next().concat(sc.nextLine());
-			} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
-			if (confirma.equalsIgnoreCase("s")) {
-				validaSaque = cc.saque(valorSaque);
-				if (validaSaque == 1) {
-					System.out.println("Saque realizado.");
-					cc.gravar();
-				} else {
-					System.out.println("Saldo Insuficiente.");
-				}
+		do {
+			System.out.println("Informe o valor para saque:");
+			valorSaque = sc.nextDouble();
+		} while (valorSaque <= 0);
+		do {
+			System.out.println("Confirmar saque <S/n>  :");
+			confirma = sc.next().concat(sc.nextLine());
+		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
+		if (confirma.equalsIgnoreCase("s")) {
+			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+			validaSaque = cc.saque(valorSaque);
+			if (validaSaque == 1) {
+				Lab04Historico ch = new Lab04Historico(agencia, conta);
+				ch.gravar(1, valorSaque);
+				cc.gravar();
+				System.out.println("Saque realizado.");
 			} else {
-				System.out.println("Saque cancelado.");
+				System.out.println("Saldo Insuficiente.");
 			}
 		} else {
-			System.out.println("Saldo Insuficiente.");
+			System.out.println("Saque cancelado.");
 		}
 	}
 
@@ -174,7 +173,6 @@ public class Lab03Sistema {
 		agencia = sc.nextInt();
 		System.out.println("Informe o número da conta:");
 		conta = sc.nextInt();
-		Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
 
 		do {
 			System.out.println("Informe o valor a ser depositado:");
@@ -185,7 +183,10 @@ public class Lab03Sistema {
 			confirma = sc.next().concat(sc.nextLine());
 		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
 		if (confirma.equalsIgnoreCase("s")) {
+			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
 			cc.deposito(valorDeposito);
+			Lab04Historico ch = new Lab04Historico(agencia, conta);
+			ch.gravar(2, valorDeposito);
 			cc.gravar();
 			System.out.println("Depósito realizado.");
 		} else {
@@ -197,25 +198,79 @@ public class Lab03Sistema {
 		int agencia;
 		int conta;
 		String confirma;
-		
+
 		System.out.println("Informe o número da agência:");
 		agencia = sc.nextInt();
 		System.out.println("Informe o número da conta:");
 		conta = sc.nextInt();
-		
+
 		do {
 			System.out.println("Confirmar consulta <S/n>  :");
 			confirma = sc.next().concat(sc.nextLine());
 		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
 		if (confirma.equalsIgnoreCase("s")) {
 			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
-			System.out.println("------------------------------------------");
-			System.out.println("          Situacação da conta");
-			System.out.println("------------------------------------------");
+			System.out.println("-------------------------------------------");
+			System.out.println("           Situacação da conta");
+			System.out.println("-------------------------------------------");
 			cc.imprimir();
-			System.out.println("------------------------------------------");
+			System.out.println("-------------------------------------------");
 		} else {
 			System.out.println("Consulta cancelada.");
+		}
+	}
+
+	public static void execExtrato() {
+		int agencia;
+		int conta;
+		String confirma;
+
+		System.out.println("Informe o número da agência:");
+		agencia = sc.nextInt();
+		System.out.println("Informe o número da conta:");
+		conta = sc.nextInt();
+
+		do {
+			System.out.println("Confirmar consulta <S/n>  :");
+			confirma = sc.next().concat(sc.nextLine());
+		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
+		if (confirma.equalsIgnoreCase("s")) {
+			Lab04Historico ch = new Lab04Historico(agencia, conta);
+			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+			System.out.println("-------------------------------------------");
+			System.out.println("           Histórico da conta");
+			System.out.println("-------------------------------------------");
+			cc.imprimir();
+			System.out.println();
+			ch.imprimir();
+			System.out.println("-------------------------------------------");
+		} else {
+			System.out.println("Consulta cancelada.");
+		}
+	}
+
+	public static void execRemoverContaCorrente() {
+		int agencia;
+		int conta;
+		String confirma;
+
+		System.out.println("Informe o número da agência:");
+		agencia = sc.nextInt();
+		System.out.println("Informe o número da conta:");
+		conta = sc.nextInt();
+
+		do {
+			System.out.println("Confirmar exclusão de conta corrente? <S/n>  :");
+			confirma = sc.next().concat(sc.nextLine());
+		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
+		if (confirma.equalsIgnoreCase("s")) {
+			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+			boolean del = cc.removerArquivo();
+			if (del) {
+				System.out.println("Conta corrente deletada.");
+			}
+		} else {
+			System.out.println("Operação cancelada...");
 		}
 	}
 
@@ -224,8 +279,8 @@ public class Lab03Sistema {
 		int opMenu;
 		boolean loopMenu = true;
 		while (loopMenu) {
-			System.out.println(
-					"1 - Cadastramento\n" + "2 - Saque\n" + "3 - Deposito\n" + "4 - Consulta\n" + "9 - Fim");
+			System.out.println("\n1 - Cadastramento\n" + "2 - Saque\n" + "3 - Deposito\n" + "4 - Consulta\n"
+					+ "5 - Extrato\n" + "8 - Remover Conta Corrente\n" + "9 - Fim");
 			opMenu = sc.nextInt();
 			switch (opMenu) {
 			case 1:
@@ -244,6 +299,14 @@ public class Lab03Sistema {
 				// imprimir
 				execConsulta();
 				break;
+			case 5:
+				// extrato
+				execExtrato();
+				break;
+			case 8:
+				// remove conta corrente
+				execRemoverContaCorrente();
+				break;
 			case 9:
 				// Fim
 				System.out.println("Finalizando operações...");
@@ -253,5 +316,4 @@ public class Lab03Sistema {
 			}
 		}
 	}
-
 }

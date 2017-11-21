@@ -1,6 +1,8 @@
 package model;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -76,6 +78,8 @@ public class Lab03ContaCorrente {
 			setNumConta(Integer.parseInt(tLinha[1]));
 			setNome(tLinha[2]);
 			setSaldo(Double.parseDouble(tLinha[3]));
+		} catch (FileNotFoundException e) {
+			System.out.println("\n Conta não existente \n\n");
 		} catch (IOException tExcept) {
 			tExcept.printStackTrace();
 		}
@@ -104,6 +108,15 @@ public class Lab03ContaCorrente {
 			return false;
 		}
 
+	}
+
+	public boolean removerArquivo() {
+		File tArq1;
+		tArq1 = new File(numAgen + "." + numConta + ".dat");
+		tArq1.delete();
+		tArq1 = new File(numAgen + "." + numConta + ".hist");
+		tArq1.delete();
+		return true;
 	}
 
 	public int getNumAgen() {
