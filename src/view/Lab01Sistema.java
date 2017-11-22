@@ -108,9 +108,9 @@ public class Lab01Sistema {
 	 * Método que realiza um saque
 	 */
 	private static void execSaque() {
-		int agencia;
-		int conta;
-		double valorSaque;
+		// int agencia;
+		// int conta;
+		// double valorSaque;
 		String info = "";
 
 		do {
@@ -129,9 +129,9 @@ public class Lab01Sistema {
 	 * Método que realiza um depósito
 	 */
 	private static void execDeposito() {
-		int agencia;
-		int conta;
-		double valorDeposito;
+		// int agencia;
+		// int conta;
+		// double valorDeposito;
 		String info = "";
 
 		do {
@@ -160,6 +160,7 @@ public class Lab01Sistema {
 				break;
 			case 2:
 				// saque
+				execSaque();
 				break;
 			case 3:
 				// Deposito

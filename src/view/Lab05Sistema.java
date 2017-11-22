@@ -4,8 +4,9 @@ import java.util.Scanner;
 
 import model.Lab03ContaCorrente;
 import model.Lab04Historico;
+import model.Lab05ContaCorrenteEspecial;
 
-public class Lab04Sistema {
+public class Lab05Sistema {
 	static Scanner sc = new Scanner(System.in);
 
 	/*
@@ -20,6 +21,7 @@ public class Lab04Sistema {
 		int contaChecked = 0;
 		String nomeCliente = "";
 		double valorDeposito = 0;
+		double limite = 0;
 		boolean checkData = true;
 
 		/*
@@ -117,8 +119,18 @@ public class Lab04Sistema {
 				System.out.println("Depósito cancelado.");
 			}
 		}
-		Lab03ContaCorrente cc = new Lab03ContaCorrente(agenciaChecked, contaChecked, nomeCliente, valorDeposito);
-		cc.gravar();
+		if (agenciaChecked > 5000) {
+			do {
+				System.out.println("Informe o limite da conta:");
+				limite = sc.nextDouble();
+			} while (limite <= 0);
+			Lab05ContaCorrenteEspecial cce = new Lab05ContaCorrenteEspecial(agenciaChecked, contaChecked, nomeCliente,
+					valorDeposito, limite);
+			cce.gravar();
+		} else {
+			Lab03ContaCorrente cc = new Lab03ContaCorrente(agenciaChecked, contaChecked, nomeCliente, valorDeposito);
+			cc.gravar();
+		}
 	}
 
 	/*
@@ -145,15 +157,28 @@ public class Lab04Sistema {
 			confirma = sc.next().concat(sc.nextLine());
 		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
 		if (confirma.equalsIgnoreCase("s")) {
-			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
-			validaSaque = cc.saque(valorSaque);
-			if (validaSaque == 1) {
-				Lab04Historico ch = new Lab04Historico(agencia, conta);
-				ch.gravar(1, valorSaque);
-				cc.gravar();
-				System.out.println("Saque realizado.");
+			if (agencia > 5000) {
+				Lab05ContaCorrenteEspecial cce = new Lab05ContaCorrenteEspecial(agencia, conta);
+				validaSaque = cce.saque(valorSaque);
+				if (validaSaque == 1) {
+					Lab04Historico ch = new Lab04Historico(agencia, conta);
+					ch.gravar(1, valorSaque);
+					cce.gravar();
+					System.out.println("Saque realizado.");
+				} else {
+					System.out.println("Saldo Insuficiente.");
+				}
 			} else {
-				System.out.println("Saldo Insuficiente.");
+				Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+				validaSaque = cc.saque(valorSaque);
+				if (validaSaque == 1) {
+					Lab04Historico ch = new Lab04Historico(agencia, conta);
+					ch.gravar(1, valorSaque);
+					cc.gravar();
+					System.out.println("Saque realizado.");
+				} else {
+					System.out.println("Saldo Insuficiente.");
+				}
 			}
 		} else {
 			System.out.println("Saque cancelado.");
@@ -183,12 +208,21 @@ public class Lab04Sistema {
 			confirma = sc.next().concat(sc.nextLine());
 		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
 		if (confirma.equalsIgnoreCase("s")) {
-			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
-			cc.deposito(valorDeposito);
-			Lab04Historico ch = new Lab04Historico(agencia, conta);
-			ch.gravar(2, valorDeposito);
-			cc.gravar();
-			System.out.println("Depósito realizado.");
+			if (agencia > 5000) {
+				Lab05ContaCorrenteEspecial cce = new Lab05ContaCorrenteEspecial(agencia, conta);
+				Lab04Historico ch = new Lab04Historico(agencia, conta);
+				cce.deposito(valorDeposito);
+				cce.gravar();
+				ch.gravar(2, valorDeposito);
+				System.out.println("Depósito realizado.");
+			} else {
+				Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+				Lab04Historico ch = new Lab04Historico(agencia, conta);
+				cc.deposito(valorDeposito);
+				cc.gravar();
+				ch.gravar(2, valorDeposito);
+				System.out.println("Depósito realizado.");
+			}
 		} else {
 			System.out.println("Depósito cancelado.");
 		}
@@ -209,12 +243,21 @@ public class Lab04Sistema {
 			confirma = sc.next().concat(sc.nextLine());
 		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
 		if (confirma.equalsIgnoreCase("s")) {
-			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
-			System.out.println("-------------------------------------------");
-			System.out.println("           Situacação da conta");
-			System.out.println("-------------------------------------------");
-			cc.imprimir();
-			System.out.println("-------------------------------------------");
+			if (agencia > 5000) {
+				Lab05ContaCorrenteEspecial cce = new Lab05ContaCorrenteEspecial(agencia, conta);
+				System.out.println("-------------------------------------------");
+				System.out.println("           Situacação da conta");
+				System.out.println("-------------------------------------------");
+				cce.imprimir();
+				System.out.println("-------------------------------------------");
+			} else {
+				Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+				System.out.println("-------------------------------------------");
+				System.out.println("           Situacação da conta");
+				System.out.println("-------------------------------------------");
+				cc.imprimir();
+				System.out.println("-------------------------------------------");
+			}
 		} else {
 			System.out.println("Consulta cancelada.");
 		}
@@ -235,15 +278,27 @@ public class Lab04Sistema {
 			confirma = sc.next().concat(sc.nextLine());
 		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
 		if (confirma.equalsIgnoreCase("s")) {
-			Lab04Historico ch = new Lab04Historico(agencia, conta);
-			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
-			System.out.println("-------------------------------------------");
-			System.out.println("           Histórico da conta");
-			System.out.println("-------------------------------------------");
-			cc.imprimir();
-			System.out.println();
-			ch.imprimir();
-			System.out.println("-------------------------------------------");
+			if (agencia > 5000) {
+				Lab04Historico ch = new Lab04Historico(agencia, conta);
+				Lab05ContaCorrenteEspecial cce = new Lab05ContaCorrenteEspecial(agencia, conta);
+				System.out.println("-------------------------------------------");
+				System.out.println("           Extrato da conta");
+				System.out.println("-------------------------------------------");
+				cce.imprimir();
+				System.out.println();
+				ch.imprimir();
+				System.out.println("-------------------------------------------");
+			} else {
+				Lab04Historico ch = new Lab04Historico(agencia, conta);
+				Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+				System.out.println("-------------------------------------------");
+				System.out.println("           Extrato da conta");
+				System.out.println("-------------------------------------------");
+				cc.imprimir();
+				System.out.println();
+				ch.imprimir();
+				System.out.println("-------------------------------------------");
+			}
 		} else {
 			System.out.println("Consulta cancelada.");
 		}
@@ -264,10 +319,18 @@ public class Lab04Sistema {
 			confirma = sc.next().concat(sc.nextLine());
 		} while (!(confirma.equalsIgnoreCase("s")) && !(confirma.equalsIgnoreCase("n")));
 		if (confirma.equalsIgnoreCase("s")) {
-			Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
-			boolean del = cc.removerArquivo();
-			if (del) {
-				System.out.println("Conta corrente deletada.");
+			if (agencia > 5000) {
+				Lab05ContaCorrenteEspecial cce = new Lab05ContaCorrenteEspecial(agencia, conta);
+				boolean del = cce.removerArquivo();
+				if (del) {
+					System.out.println("Conta corrente deletada.");
+				}
+			} else {
+				Lab03ContaCorrente cc = new Lab03ContaCorrente(agencia, conta);
+				boolean del = cc.removerArquivo();
+				if (del) {
+					System.out.println("Conta corrente deletada.");
+				}
 			}
 		} else {
 			System.out.println("Operação cancelada...");
